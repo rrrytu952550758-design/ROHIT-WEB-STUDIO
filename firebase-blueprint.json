@@ -1,0 +1,123 @@
+{
+  "entities": {
+    "userProfile": {
+      "title": "UserProfile",
+      "description": "Registered customer or admin profile details",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 100 },
+        "role": { "type": "string", "enum": ["admin", "customer"] },
+        "company": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "admin": {
+      "title": "Admin",
+      "description": "Whitelist of verified admin user IDs",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "maxLength": 256 },
+        "grantedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["email"]
+    },
+    "service": {
+      "title": "Service",
+      "description": "Web Studio service offering managed by admin",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 150 },
+        "category": { "type": "string", "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "price": { "type": "string", "maxLength": 50 },
+        "turnaround": { "type": "string", "maxLength": 50 },
+        "features": { "type": "array" },
+        "badge": { "type": "string", "maxLength": 50 },
+        "isActive": { "type": "boolean" },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["title", "category", "description", "price", "isActive"]
+    },
+    "bugRequest": {
+      "title": "BugRequest",
+      "description": "Bug fix and troubleshooting ticket submitted by customer",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "maxLength": 150 },
+        "description": { "type": "string", "maxLength": 3000 },
+        "websiteUrl": { "type": "string", "maxLength": 500 },
+        "environment": { "type": "string", "maxLength": 100 },
+        "urgency": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+        "errorLogs": { "type": "string", "maxLength": 3000 },
+        "reproductionSteps": { "type": "string", "maxLength": 2000 },
+        "status": { "type": "string", "enum": ["pending", "analyzing", "in_progress", "ready_for_test", "resolved", "closed"] },
+        "adminNotes": { "type": "string", "maxLength": 2000 },
+        "customerId": { "type": "string", "maxLength": 128 },
+        "customerEmail": { "type": "string", "maxLength": 256 },
+        "customerName": { "type": "string", "maxLength": 100 },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["title", "description", "urgency", "status", "customerId", "customerEmail"]
+    },
+    "inquiry": {
+      "title": "Inquiry",
+      "description": "Customer contact form message",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 256 },
+        "subject": { "type": "string", "maxLength": 200 },
+        "serviceCategory": { "type": "string", "maxLength": 100 },
+        "message": { "type": "string", "maxLength": 3000 },
+        "budget": { "type": "string", "maxLength": 100 },
+        "status": { "type": "string", "enum": ["new", "reviewed", "replied", "archived"] },
+        "adminReply": { "type": "string", "maxLength": 2000 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["name", "email", "message", "status"]
+    },
+    "cmsSection": {
+      "title": "CMSSection",
+      "description": "Configurable website content, hero text, statistics, and showcase items",
+      "type": "object",
+      "properties": {
+        "sectionId": { "type": "string", "maxLength": 100 },
+        "content": { "type": "object" },
+        "updatedAt": { "type": "string", "maxLength": 64 },
+        "updatedBy": { "type": "string", "maxLength": 256 }
+      },
+      "required": ["sectionId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "userProfile",
+      "description": "User profiles with strict owner/admin read/write controls"
+    },
+    "/admins/{adminId}": {
+      "schema": "admin",
+      "description": "Admin authorization documents"
+    },
+    "/services/{serviceId}": {
+      "schema": "service",
+      "description": "Studio service offerings, readable by all, editable by admin"
+    },
+    "/bugRequests/{requestId}": {
+      "schema": "bugRequest",
+      "description": "Bug fix tickets submitted by customers, managed by admin and tracked by customer"
+    },
+    "/inquiries/{inquiryId}": {
+      "schema": "inquiry",
+      "description": "Contact form submissions, creatable by anyone, readable and replyable by admin and inquiry author"
+    },
+    "/cmsContent/{sectionId}": {
+      "schema": "cmsSection",
+      "description": "Studio content blocks, readable by all visitors, editable by admin"
+    }
+  }
+}
